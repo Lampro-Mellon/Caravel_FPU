@@ -33,7 +33,7 @@ set ::env(VERILOG_FILES) "\
 set ::env(CLOCK_PORT) "user_clock2"
 set ::env(CLOCK_NET) "mprj.clk"
 
-set ::env(CLOCK_PERIOD) "20"
+set ::env(CLOCK_PERIOD) "10"
 
 ## Internal Macros
 ### Macro Placement
@@ -42,7 +42,7 @@ set ::env(MACRO_PLACEMENT_CFG) $script_dir/macro.cfg
 ### Black-box verilog and views
 set ::env(VERILOG_FILES_BLACKBOX) "\
 	$script_dir/../../caravel/verilog/rtl/defines.v \
-	$script_dir/../../verilog/rtl/user_project_example.sv"
+	$script_dir/../../verilog/rtl/user_proj_example.v"
 
 set ::env(EXTRA_LEFS) "\
 	$script_dir/../../lef/user_proj_example.lef"
