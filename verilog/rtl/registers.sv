@@ -138,8 +138,8 @@ module fpu_registers(
    wire [12:0] op_ns;
 
    assign addr_op = (addr[31:0] == OPERATION);
-   assign wr_op   = addr_op && wren;
-   assign op_ns   = wrdata;
+   assign wr_op   = |op_valids | (addr_op && wren);
+   assign op_ns   = |op_valids ? 13'b0 : wrdata;
 
    rvdffe #(13) op_ff (.clk(clk), .rst_l(rst_l), .en(wr_op), .din(op_ns), .dout(op_valids));
 
