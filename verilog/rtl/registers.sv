@@ -37,7 +37,7 @@ module fpu_registers(
    assign wr_opA = wren && addr_A;
    assign opA_ns = wrdata;
 
-   rvdffe #(32) opA_ff (.clk(clk), .en(wr_opA), .din(opA_ns), .dout(opA));
+   rvdffe #(32) opA_ff (.clk(clk), .rst_l(rst_l), .en(wr_opA), .din(opA_ns), .dout(opA));
 
 
    // ----------------------------------------------------------------------
@@ -53,7 +53,7 @@ module fpu_registers(
    assign wr_opB = wren && addr_B;
    assign opB_ns = wrdata;
 
-   rvdffe #(32) opB_ff (.clk(clk), .en(wr_opB), .din(opB_ns), .dout(opB));
+   rvdffe #(32) opB_ff (.clk(clk), .rst_l(rst_l), .en(wr_opB), .din(opB_ns), .dout(opB));
 
 
    // ----------------------------------------------------------------------
@@ -69,7 +69,7 @@ module fpu_registers(
    assign wr_opC = wren && addr_C;
    assign opC_ns = wrdata;
 
-   rvdffe #(32) opC_ff (.clk(clk), .en(wr_opC), .din(opC_ns), .dout(opC));
+   rvdffe #(32) opC_ff (.clk(clk), .rst_l(rst_l), .en(wr_opC), .din(opC_ns), .dout(opC));
 
 
    // ----------------------------------------------------------------------
@@ -86,7 +86,7 @@ module fpu_registers(
    assign wr_result   = fpu_result_valid;
    assign result_ns   = fpu_result;
 
-   rvdffe #(32) result_ff (.clk(clk), .en(wr_result), .din(result_ns), .dout(result));
+   rvdffe #(32) result_ff (.clk(clk), .rst_l(rst_l), .en(wr_result), .din(result_ns), .dout(result));
 
 
    // ----------------------------------------------------------------------
@@ -105,7 +105,7 @@ module fpu_registers(
    assign wr_op_comp   = fpu_result_valid;
    assign op_comp_ns   = fpu_valids;
 
-   rvdffe #(13) op_comp_ff (.clk(clk), .en(wr_op_comp), .din(op_comp_ns), .dout(op_comp));
+   rvdffe #(13) op_comp_ff (.clk(clk), .rst_l(rst_l), .en(wr_op_comp), .din(op_comp_ns), .dout(op_comp));
 
 
    // ----------------------------------------------------------------------
@@ -123,7 +123,7 @@ module fpu_registers(
    assign wr_intr_gen   = (addr_intr_gen && !wren) || fpu_result_valid;
    assign intr_gen_ns   = (addr_intr_gen && !wren) ? 1'b0 : (fpu_result_valid ? 1'b1 : inter_gen);
 
-   rvdffe #(1) intr_gen_ff (.clk(clk), .en(wr_intr_gen), .din(intr_gen_ns), .dout(inter_gen));
+   rvdffe #(1) intr_gen_ff (.clk(clk), .rst_l(rst_l), .en(wr_intr_gen), .din(intr_gen_ns), .dout(inter_gen));
    
 
    // ----------------------------------------------------------------------
@@ -141,7 +141,7 @@ module fpu_registers(
    assign wr_op   = addr_op && wren;
    assign op_ns   = wrdata;
 
-   rvdffe #(13) op_ff (.clk(clk), .en(wr_op), .din(op_ns), .dout(op_valids));
+   rvdffe #(13) op_ff (.clk(clk), .rst_l(rst_l), .en(wr_op), .din(op_ns), .dout(op_valids));
 
 
    // ----------------------------------------------------------------------
@@ -173,8 +173,8 @@ module fpu_registers(
    assign fflags_ns   = fpu_result_valid ? exceptions[4:0] : wrdata;
    assign frm_ns      = frm_addr ? wrdata[2:0] : wrdata[7:5];
 
-   rvdffe #(5)  fflags_ff (.clk(clk), .en(wr_fflags_r | wr_fcsr_r), .din(fflags_ns[4:0]), .dout(fflags[4:0]));
-   rvdffe #(3)  frm_ff    (.clk(clk), .en(wr_frm_r    | wr_fcsr_r), .din(frm_ns[2:0]),    .dout(frm[2:0]));
+   rvdffe #(5)  fflags_ff (.clk(clk), .rst_l(rst_l), .en(wr_fflags_r | wr_fcsr_r), .din(fflags_ns[4:0]), .dout(fflags[4:0]));
+   rvdffe #(3)  frm_ff    (.clk(clk), .rst_l(rst_l), .en(wr_frm_r    | wr_fcsr_r), .din(frm_ns[2:0]),    .dout(frm[2:0]));
 
    assign fcsr_read = {frm, fflags};
 
