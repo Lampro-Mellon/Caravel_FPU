@@ -189,6 +189,7 @@ module fpu_registers(
                       ({32{fflags_addr}}   & {27'b0, fflags})    |
                       ({32{fcsr_addr}}     & {24'b0, fcsr_read});
 
-    assign ack = inter_gen | wr_opA | wr_opB | wr_opC | wr_op | wr_fflags_r | wr_frm_r | wr_fcsr_r;
+    assign ack = inter_gen | (addr == OPERAND_A) | (addr == OPERAND_B) | (addr == OPERAND_C) | (addr == OPERATION) | 
+                 (addr == FFLAGS) | (addr == FRM) | (addr == FCSR) | (addr == OPERATION_COMPLETED) | (addr == RESULT);
 
 endmodule
