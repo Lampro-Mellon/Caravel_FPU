@@ -300,7 +300,7 @@ module rvdffe #( parameter WIDTH=1, SHORT=0, OVERRIDE=0 )
      output wire [WIDTH-1:0] dout
      );
 
-   wire                      l1clk;
+   wire          [WIDTH-1:0] in;
 
 if (SHORT == 1) begin : genblock
    if (1) begin : genblock
@@ -313,7 +313,9 @@ else begin : genblock
 //    if (WIDTH >= 8 || OVERRIDE==1) begin: genblock
 // `endif
 
-      rvdff #(WIDTH) dff (.din(din), .dout(dout), .rst_l(rst_l), .clk(l1clk));
+			assign in = en ? din : dout;
+
+      rvdff #(WIDTH) dff (.din(in), .dout(dout), .rst_l(rst_l), .clk(clk));
 
 // `ifndef RV_PHYSICAL
 //    end
