@@ -1,14 +1,14 @@
 module fpu_registers(
-    input  wire        clk,
-    input  wire        rst_l,
-    input  wire [31:0] fpu_result,
-    input  wire [12:0] fpu_valids,
-    input  wire [31:0] addr,
-    input  wire        wren,
-    input  wire [31:0] wrdata,
-    input  wire [4:0]  exceptions,
+    input  wire         clk,
+    input  wire         rst_l,
+    input  wire  [31:0] fpu_result,
+    input  wire  [12:0] fpu_valids,
+    input  wire  [31:0] addr,
+    input  wire         wren,
+    input  wire  [31:0] wrdata,
+    input  wire  [4:0]  exceptions,
 
-    output wire        inter_gen,
+    output wire         ack,
     output wire  [31:0] rddata,
     output wire  [31:0] opA,
     output wire  [31:0] opB,
@@ -117,7 +117,7 @@ module fpu_registers(
    wire        addr_intr_gen;
    wire        wr_intr_gen;
    wire        intr_gen_ns;
-   //wire        inter_gen;
+   wire        inter_gen;
 
    assign addr_intr_gen = (addr[31:0] == INTERRUPT_GENERATION);
    assign wr_intr_gen   = (addr_intr_gen && !wren) || fpu_result_valid;
@@ -188,5 +188,7 @@ module fpu_registers(
                       ({32{frm_addr}}      & {29'b0, frm})       |
                       ({32{fflags_addr}}   & {27'b0, fflags})    |
                       ({32{fcsr_addr}}     & {24'b0, fcsr_read});
+
+    assign ack = inter_gen | wr_opA | wr_opB | wr_opC | wr_op | wr_fflags_r | wr_frm_r | wr_fcsr_r;
 
 endmodule

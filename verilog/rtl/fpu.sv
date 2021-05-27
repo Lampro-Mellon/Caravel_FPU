@@ -26,7 +26,7 @@ module fpu_top
   input  wire [31:0]     la_addr,                // wire analyzer address
 //outputs
   output wire            illegal_op,
-  output wire            inter_gen,
+  output wire            ack,
 
   output wire [31:0]     rddata,                 // read  data sent to wb
   output wire [31:0]     out,                    // to GPIO
@@ -102,7 +102,7 @@ module fpu_top
                                    .opC             (c                        ),
                                    .frm             (round_mode               ),
                                    .op_valids       ({valid_in, op_in}        ),
-                                   .inter_gen       (inter_gen                ));  
+                                   .ack             (ack                      ));  
 
   f_class #(8,24) fpu_fclass      ( .in             (a                        ),
                                     .result         (fclass_out               ) );

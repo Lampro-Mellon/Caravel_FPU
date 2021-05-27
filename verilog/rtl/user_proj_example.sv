@@ -333,7 +333,7 @@ module user_proj_example #(
 	.wrdata(wdata),
 	.rddata(rdata),
 	.illegal_op(illegal_op),
-	.inter_gen(wbs_ack_o),
+	.ack(wbs_ack_o),
 	.exceptions(exceptions),
 	.out(io_out[31:0]));
 
