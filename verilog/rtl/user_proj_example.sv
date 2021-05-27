@@ -85,6 +85,8 @@ module fpu_top
   wire [31:0] int_rddata;
   wire [31:0] addr;        
 
+  wire        wb_valid_f;
+
   assign la_write_en              = |la_write;
   assign addr                     = la_write_en ? la_addr : rdwraddr;
              		    		
@@ -188,22 +190,24 @@ module fpu_top
   
   assign valid_out                = {sqrt_valid_out,div_valid_out,valid_in[8:0]};
 
+  rvdff #(1) wb_valid_ff (.clk(clk), .rst_l(rst_l), .din(wb_valid), .dout(wb_valid_f));
+
 // return output data according to module enable
-  assign {out, exceptions}        = ({37{illegal_op}}              & {32'b0      ,5'b0              })  |
-                                    ({37{valid_in[10 & wb_valid]}} & {sqrt_out   ,sqrt_exceptions   })  |
-                                    ({37{valid_in[9] & wb_valid}}  & {div_out    ,div_exceptions    })  |
-                                    ({37{valid_in[8] & wb_valid}}  & {mac_out    ,mac_exceptions    })  |
-                                    ({37{valid_in[7] & wb_valid}}  & {mul_out    ,mul_exceptions    })  |
-                                    ({37{valid_in[6] & wb_valid}}  & {add_sub_out,add_sub_exceptions})  |
-                                    ({37{valid_in[5] & wb_valid}}  & {ftoi_out   ,ftoi_exceptions   })  |
-                                    ({37{valid_in[4] & wb_valid}}  & {itof_out   ,ftoi_exceptions   })  |
-                                    ({37{valid_in[3] & wb_valid}}  & {min_max_out,min_max_exceptions})  |
-                                    ({37{valid_in[2] & wb_valid}}  & {cmp_out    ,cmp_exceptions    })  |
-                                    ({37{valid_in[1] & wb_valid}}  & {sinj_out   ,5'b0              })  |
-                                    ({37{valid_in[0] & wb_valid}}  & {fclass_out ,5'b0              }); 
+  assign {out, exceptions}        = ({37{illegal_op}}                 & {32'b0      ,5'b0              })  |
+                                    ({37{valid_in[10] & wb_valid_f}}  & {sqrt_out   ,sqrt_exceptions   })  |
+                                    ({37{valid_in[9]  & wb_valid_f}}  & {div_out    ,div_exceptions    })  |
+                                    ({37{valid_in[8]  & wb_valid_f}}  & {mac_out    ,mac_exceptions    })  |
+                                    ({37{valid_in[7]  & wb_valid_f}}  & {mul_out    ,mul_exceptions    })  |
+                                    ({37{valid_in[6]  & wb_valid_f}}  & {add_sub_out,add_sub_exceptions})  |
+                                    ({37{valid_in[5]  & wb_valid_f}}  & {ftoi_out   ,ftoi_exceptions   })  |
+                                    ({37{valid_in[4]  & wb_valid_f}}  & {itof_out   ,ftoi_exceptions   })  |
+                                    ({37{valid_in[3]  & wb_valid_f}}  & {min_max_out,min_max_exceptions})  |
+                                    ({37{valid_in[2]  & wb_valid_f}}  & {cmp_out    ,cmp_exceptions    })  |
+                                    ({37{valid_in[1]  & wb_valid_f}}  & {sinj_out   ,5'b0              })  |
+                                    ({37{valid_in[0]  & wb_valid_f}}  & {fclass_out ,5'b0              }); 
 
 // data to be read from memory
-  assign rddata                  =  wb_valid ? 32'b0 : la_write_en ? (la_write & la_data) : int_rddata;
+  assign rddata                  =  wb_valid_f ? 32'b0 : la_write_en ? (la_write & la_data) : int_rddata;
 
 endmodule
 	
