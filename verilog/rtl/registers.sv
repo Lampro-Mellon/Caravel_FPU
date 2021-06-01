@@ -173,7 +173,7 @@ module fpu_registers(
    assign fflags_ns   = fpu_result_valid ? exceptions[4:0] : wrdata;
    assign frm_ns      = frm_addr ? wrdata[2:0] : wrdata[7:5];
 
-   rvdffe #(5)  fflags_ff (.clk(clk), .rst_l(rst_l), .en(wr_fflags_r | wr_fcsr_r), .din(fflags_ns[4:0]), .dout(fflags[4:0]));
+   rvdffe #(5)  fflags_ff (.clk(clk), .rst_l(rst_l), .en(wr_fflags_r | wr_fcsr_r | fpu_result_valid), .din(fflags_ns[4:0]), .dout(fflags[4:0]));
    rvdffe #(3)  frm_ff    (.clk(clk), .rst_l(rst_l), .en(wr_frm_r    | wr_fcsr_r), .din(frm_ns[2:0]),    .dout(frm[2:0]));
 
    assign fcsr_read = {frm, fflags};
