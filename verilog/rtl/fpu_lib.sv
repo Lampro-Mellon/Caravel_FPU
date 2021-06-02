@@ -31,14 +31,14 @@ module special_check #(parameter  exp_width = 8, parameter mant_width = 24)
   assign sig_zero         = |sig ? 1'b0 : 1'b1;     
   assign exp_one          = &exp ? 1'b1 : 1'b0;
 
-  assign is_pos_zero      = !sign & exp_zero & sig_zero;
-  assign is_neg_zero      = sign & exp_zero & sig_zero;
-  assign is_pos_subnorm   = !sign & exp_zero;
-  assign is_neg_subnorm   =  sign & exp_zero;
-  assign is_pos_inf       = !sign & exp_one  & sig_zero; 
-  assign is_neg_inf       = sign & exp_one  & sig_zero; 
-  assign is_qNaN          = exp_one  & !sig_zero & sig[22];
-  assign is_sNaN          = exp_one  & !sig_zero & !sig[22];
+  assign is_pos_zero      = !sign     & exp_zero  & sig_zero;
+  assign is_neg_zero      =  sign     & exp_zero  & sig_zero;
+  assign is_pos_subnorm   = !sign     & exp_zero  & !sig_zero;
+  assign is_neg_subnorm   =  sign     & exp_zero  & !sig_zero;
+  assign is_pos_inf       = !sign     & exp_one   & sig_zero; 
+  assign is_neg_inf       =  sign     & exp_one   & sig_zero; 
+  assign is_qNaN          =  exp_one  & !sig_zero & sig[22];
+  assign is_sNaN          =  exp_one  & !sig_zero & !sig[22];
 
   assign is_pos_norm      = (is_pos_zero | is_neg_zero | is_pos_subnorm | is_neg_subnorm | is_pos_inf | is_neg_inf | 
 			                      is_qNaN | is_sNaN) ? 1'b0 : ~sign ? 1'b1 : 1'b0;
