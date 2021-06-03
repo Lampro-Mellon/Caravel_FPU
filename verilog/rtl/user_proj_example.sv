@@ -187,7 +187,8 @@ module fpu_top
   assign illegal_op               = ((valid_in[1] || valid_in[2]) && (op_in == 2'b11)) ? 1'b1 : 1'b0;
 
 // output operation performed
-  assign op_out                   = ({valid_in[1] || valid_in[2] || valid_in[3] || valid_in[6] || valid_in[8]}) ? op_in : 2'b0;
+  assign op_out                   = ({valid_in[1] || valid_in[2] || valid_in[3] || valid_in[4] || 
+                                      valid_in[5] || valid_in[6] || valid_in[8]}) ? op_in : 2'b0;
   
   assign valid_out                = {sqrt_valid_out,div_valid_out,valid_in[8:0]};
 
