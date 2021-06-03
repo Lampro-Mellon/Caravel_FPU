@@ -204,7 +204,7 @@ module fpu_top
                                     ({37{valid_in[7]    & wb_valid_f}}  & {mul_out    ,mul_exceptions    })  |
                                     ({37{valid_in[6]    & wb_valid_f}}  & {add_sub_out,add_sub_exceptions})  |
                                     ({37{valid_in[5]    & wb_valid_f}}  & {ftoi_out   ,ftoi_exceptions   })  |
-                                    ({37{valid_in[4]    & wb_valid_f}}  & {itof_out   ,ftoi_exceptions   })  |
+                                    ({37{valid_in[4]    & wb_valid_f}}  & {itof_out   ,itof_exceptions   })  |
                                     ({37{valid_in[3]    & wb_valid_f}}  & {min_max_out,min_max_exceptions})  |
                                     ({37{valid_in[2]    & wb_valid_f}}  & {cmp_out    ,cmp_exceptions    })  |
                                     ({37{valid_in[1]    & wb_valid_f}}  & {sinj_out   ,5'b0              })  |
