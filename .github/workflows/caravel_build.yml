@@ -3,9 +3,9 @@ name: Caravel Build
 
 on:
     # Runs on Every Push
-    push:
+    # push:
     # Runs on Pull Requests
-    pull_request:
+    # pull_request:
 
 jobs:
   make_ship:
