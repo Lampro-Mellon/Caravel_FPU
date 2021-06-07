@@ -15,7 +15,8 @@ module fpu_registers(
     output wire  [31:0] opC,
     output wire  [2:0]  frm,
 
-    output  wire [12:0] op_valids
+    output wire [12:0] op_valids,
+    output wire [31:0] result
 );
 
    localparam base_addr = 32'h3000_0000;
@@ -80,7 +81,6 @@ module fpu_registers(
    wire        addr_result;
    wire        wr_result;
    wire [31:0] result_ns;
-   wire [31:0] result;
 
    assign addr_result = (addr[31:0] == RESULT);
    assign wr_result   = fpu_result_valid;

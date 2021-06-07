@@ -88,12 +88,14 @@ module fpu_top
   wire        wb_valid_f;
   wire        wb_valid_ns;
 
+  wire [31:0] fpu_result;
+
   assign la_write_en              = |la_write;
   assign addr                     = la_write_en ? la_addr : rdwraddr;
              		    		
   fpu_registers csrs             ( .clk             (clk                      ),
                                    .rst_l           (rst_l                    ),
-                                   .fpu_result      (out                      ),
+                                   .fpu_result      (fpu_result               ),
                                    .fpu_valids      ({valid_out, op_out}      ),
                                    .addr            (addr                     ),
                                    .wren            (wb_valid                 ),
@@ -105,7 +107,8 @@ module fpu_top
                                    .opC             (c                        ),
                                    .frm             (round_mode               ),
                                    .op_valids       ({valid_in, op_in}        ),
-                                   .ack             (ack                      ));  
+                                   .ack             (ack                      ),
+                                   .result          (out                      ));  
 
   f_class #(8,24) fpu_fclass      ( .in             (a                        ),
                                     .result         (fclass_out               ) );
@@ -197,7 +200,7 @@ module fpu_top
   rvdff #(1) wb_valid_ff (.clk(clk), .rst_l(rst_l), .din(wb_valid_ns), .dout(wb_valid_f));
 
 // return output data according to module enable
-  assign {out, exceptions}        = ({37{illegal_op}}                   & {32'b0      ,5'b0              })  |
+  assign {fpu_result, exceptions} = ({37{illegal_op}}                   & {32'b0      ,5'b0              })  |
                                     ({37{sqrt_valid_out & wb_valid_f}}  & {sqrt_out   ,sqrt_exceptions   })  |
                                     ({37{div_valid_out  & wb_valid_f}}  & {div_out    ,div_exceptions    })  |
                                     ({37{valid_in[8]    & wb_valid_f}}  & {mac_out    ,mac_exceptions    })  |
