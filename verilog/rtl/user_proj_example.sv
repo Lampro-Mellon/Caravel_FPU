@@ -92,6 +92,7 @@ module fpu_top
 
   assign la_write_en              = |la_write;
   assign addr                     = la_write_en ? la_addr : rdwraddr;
+  assign data                     = la_write_en ? la_data : wrdata
              		    		
   fpu_registers csrs             ( .clk             (clk                      ),
                                    .rst_l           (rst_l                    ),
@@ -99,7 +100,7 @@ module fpu_top
                                    .fpu_valids      ({valid_out, op_out}      ),
                                    .addr            (addr                     ),
                                    .wren            (wb_valid                 ),
-                                   .wrdata          (wrdata                   ),
+                                   .wrdata          (data                     ),
                                    .exceptions      (exceptions               ),
                                    .rddata          (int_rddata               ),
                                    .opA             (a                        ),
