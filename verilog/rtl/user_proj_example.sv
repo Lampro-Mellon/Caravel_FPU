@@ -92,7 +92,7 @@ module fpu_top
 
   assign la_write_en              = |la_write;
   assign addr                     = la_write_en ? la_addr : rdwraddr;
-  assign data                     = la_write_en ? la_data : wrdata
+  assign data                     = la_write_en ? la_data : wrdata;
              		    		
   fpu_registers csrs             ( .clk             (clk                      ),
                                    .rst_l           (rst_l                    ),
