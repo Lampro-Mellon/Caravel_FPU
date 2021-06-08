@@ -319,7 +319,7 @@ module user_proj_example #(
     assign io_oeb = {(37){~rst}};
 
     // LA
-    assign la_data_out = {{(127-BITS){1'b0}}, rdata};
+    assign la_data_out = {{(127-BITS){1'b0}}, io_out};
     // Assuming LA probes [31:0] are for controlling the input register  
     assign la_write = ~la_oenb[31:0] & ~valid;
     // Assuming LA probes [65:64] are for controlling the count clk & reset  
