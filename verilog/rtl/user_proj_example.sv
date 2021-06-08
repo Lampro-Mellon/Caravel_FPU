@@ -197,7 +197,7 @@ module fpu_top
   
   assign valid_out                = {sqrt_valid_out,div_valid_out,valid_in[8:0]};
 
-  assign wb_valid_ns              =( |valid_out | wb_valid) ? wb_valid : wb_valid_f;
+  assign wb_valid_ns              = (|valid_out | wb_valid | la_write_en) ? (wb_valid | la_write_en) : wb_valid_f;
 
   rvdff #(1) wb_valid_ff (.clk(clk), .rst_l(rst_l), .din(wb_valid_ns), .dout(wb_valid_f));
 
