@@ -89,6 +89,7 @@ module fpu_top
   wire        wb_valid_ns;
 
   wire [31:0] fpu_result;
+  wire [31:0] data;
 
   assign la_write_en              = |la_write;
   assign addr                     = la_write_en ? la_addr : rdwraddr;
@@ -99,7 +100,7 @@ module fpu_top
                                    .fpu_result      (fpu_result               ),
                                    .fpu_valids      ({valid_out, op_out}      ),
                                    .addr            (addr                     ),
-                                   .wren            (wb_valid                 ),
+                                   .wren            (wb_valid | la_write_en   ),
                                    .wrdata          (data                     ),
                                    .exceptions      (exceptions               ),
                                    .rddata          (int_rddata               ),
