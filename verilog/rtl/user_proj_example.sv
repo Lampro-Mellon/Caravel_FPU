@@ -316,7 +316,7 @@ module user_proj_example #(
 
     // IO
     assign io_out[37:32] = 6'b0;
-    assign io_oeb = {(37){~rst}};
+    assign io_oeb = {(37){rst}};
 
     // LA
     assign la_data_out = {{(127-BITS){1'b0}}, io_out};
