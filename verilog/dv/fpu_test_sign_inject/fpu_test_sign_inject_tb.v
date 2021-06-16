@@ -16,12 +16,18 @@
 `default_nettype none
 
 `timescale 1 ns / 1 ps
-
+//`include "fpu.c"
 `include "uprj_netlists.v"
 `include "caravel_netlists.v"
 `include "spiflash.v"
 
-module la_test2_tb;
+/*import "DPI-C" context function void fpu_c (input int a,b,c,roundingMode,
+                                            input bit add_op,
+                                            input int COMP_op,MAC_op,min_max_op,signed_conv,
+                                            input int finalStage_valid,
+                                            output int result,exceptionFlags                                          );*/
+
+module fpu_test_sign_inject_tb;
 	reg clock;
 	reg RSTB;
 	reg CSB;
@@ -42,8 +48,8 @@ module la_test2_tb;
 	end
 
 	initial begin
-		$dumpfile("la_test2.vcd");
-		$dumpvars(0, la_test2_tb);
+		$dumpfile("fpu_test_sign_inject.vcd");
+		$dumpvars(0, fpu_test_sign_inject_tb);
 
 		// Repeat cycles of 1000 clock edges as needed to complete testbench
 		repeat (30) begin
@@ -59,14 +65,55 @@ module la_test2_tb;
 		$display("%c[0m",27);
 		$finish;
 	end
+	reg [32:0]i=1;
+initial begin
+		fork begin
+			forever begin
+				wait(checkbits == 16'h AB60) begin
+					$display("Monitor: Test %0d Started",i);
+					fork
+						wait(uut.mprj.mprj.wbs_adr_i == 32'h30000000) begin//operand a			
+							repeat(2)@(negedge uut.mprj.mprj.wb_clk_i);
+							if(uut.mprj.mprj.wbs_dat_i != uut.mprj.mprj.fpu.a)
+								$display("\na NOT CORRECT \ntime = %0d\tactual = 32'h%0h\ expected = 32'h%0h",$time,uut.mprj.mprj.wbs_dat_i,uut.mprj.mprj.fpu.a);
+							else
+								$display("\ntime = %0d \n a is correct\n",$time);
+						end
+						wait(uut.mprj.mprj.wbs_adr_i == 32'h30000004) begin//operand b			
+							repeat(2)@(negedge uut.mprj.mprj.wb_clk_i);
+							if(uut.mprj.mprj.wbs_dat_i != uut.mprj.mprj.fpu.b)
+								$display("\nb NOT CORRECT \ntime = %0d\tactual = 32'h%0h\ expected = 32'h%0h",$time,uut.mprj.mprj.wbs_dat_i,uut.mprj.mprj.fpu.b);
+							else
+								$display("\ntime = %0d \n b is correct\n",$time);
+						end
 
-	initial begin
-		wait(checkbits == 16'h AB60);
-		$display("Monitor: Test 2 MPRJ-Logic Analyzer Started");
-		wait(checkbits == 16'h AB61);
-		$display("Monitor: Test 2 MPRJ-Logic Analyzer Passed");
-		$finish;
+						wait(uut.mprj.mprj.wbs_adr_i == 32'h3000001c) begin //operand operation			
+							repeat(2)@(negedge uut.mprj.mprj.wb_clk_i);
+							if(uut.mprj.mprj.wbs_dat_i != {19'b0,uut.mprj.mprj.fpu.valid_in,uut.mprj.mprj.fpu.op_in})
+								$display("\noperation NOT CORRECT \ntime = %0d\tactual = 32'h%0h\ expected = 32'h%0h",$time,uut.mprj.mprj.wbs_dat_i,{19'b0,uut.mprj.mprj.fpu.valid_in, uut.mprj.mprj.fpu.op_in});
+							else
+								$display("\ntime = %0d \n operation is correct\n",$time	);
+						end
+					join
+						wait(checkbits == 16'h AB61) begin
+							$display("Monitor: Test %0d Passed\n",i);
+							i = i+1;
+						end
+				end
+			end
+		end
+		begin
+			wait(checkbits == 16'h AB62)
+			begin
+				$display("Monitor: ALL Test Finished");
+				$finish;
+				//disable fork;
+			end
+		end
+		join
+
 	end
+
 
 	initial begin
 		RSTB <= 1'b0;
@@ -125,7 +172,7 @@ module la_test2_tb;
 	);
 
 	spiflash #(
-		.FILENAME("la_test2.hex")
+		.FILENAME("fpu_test_sign_inject.hex")
 	) spiflash (
 		.csb(flash_csb),
 		.clk(flash_clk),

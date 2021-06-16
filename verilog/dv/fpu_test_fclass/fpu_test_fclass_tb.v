@@ -16,26 +16,30 @@
 `default_nettype none
 
 `timescale 1 ns / 1 ps
-
+//`include "fpu.c"
 `include "uprj_netlists.v"
 `include "caravel_netlists.v"
 `include "spiflash.v"
-`include "tbuart.v"
 
-module la_test1_tb;
+/*import "DPI-C" context function void fpu_c (input int a,b,c,roundingMode,
+                                            input bit add_op,
+                                            input int COMP_op,MAC_op,min_max_op,signed_conv,
+                                            input int finalStage_valid,
+                                            output int result,exceptionFlags                                          );*/
+
+module fpu_test_fclass_tb;
 	reg clock;
-    reg RSTB;
+	reg RSTB;
 	reg CSB;
 
 	reg power1, power2;
 
     	wire gpio;
-	wire uart_tx;
     	wire [37:0] mprj_io;
 	wire [15:0] checkbits;
 
-	assign checkbits  = mprj_io[31:16];
-	assign uart_tx = mprj_io[6];
+	assign checkbits = mprj_io[31:16];
+	assign mprj_io[3] = (CSB == 1'b1) ? 1'b1 : 1'bz;
 
 	always #12.5 clock <= (clock === 1'b0);
 
@@ -43,34 +47,64 @@ module la_test1_tb;
 		clock = 0;
 	end
 
-	assign mprj_io[3] = (CSB == 1'b1) ? 1'b1 : 1'bz;
-
 	initial begin
-		// $dumpfile("la_test1.vcd");
-		// $dumpvars(0, la_test1_tb);
+		$dumpfile("fpu_test_fclass.vcd");
+		$dumpvars(0, fpu_test_fclass_tb);
 
 		// Repeat cycles of 1000 clock edges as needed to complete testbench
-		repeat (200) begin
+		repeat (30) begin
 			repeat (1000) @(posedge clock);
 			// $display("+1000 cycles");
 		end
 		$display("%c[1;31m",27);
 		`ifdef GL
-			$display ("Monitor: Timeout, Test LA (GL) Failed");
+			$display ("Monitor: Timeout, Test Mega-Project IO (GL) Failed");
 		`else
-			$display ("Monitor: Timeout, Test LA (RTL) Failed");
+			$display ("Monitor: Timeout, Test Mega-Project IO (RTL) Failed");
 		`endif
 		$display("%c[0m",27);
 		$finish;
 	end
+	reg [32:0]i=1;
+		initial begin
+		fork begin
+			forever begin
+				wait(checkbits == 16'h AB60) begin
+					$display("Monitor: Test %0d Started",i);
+					fork
+						wait(uut.mprj.mprj.wbs_adr_i == 32'h30000000) begin//operand a			
+							repeat(2)@(negedge uut.mprj.mprj.wb_clk_i);
+							if(uut.mprj.mprj.wbs_dat_i != uut.mprj.mprj.fpu.a)
+								$display("\na NOT CORRECT \ntime = %0d\tactual = 32'h%0h\ expected = 32'h%0h",$time,uut.mprj.mprj.wbs_dat_i,uut.mprj.mprj.fpu.a);
+							else
+								$display("\ntime = %0d \n a is correct\n",$time);
+						end
 
-	initial begin
-		wait(checkbits == 16'hAB40);
-		$display("LA Test 1 started");
-		wait(checkbits == 16'hAB41);
-		wait(checkbits == 16'hAB51);
-		#10000;
-		$finish;
+						wait(uut.mprj.mprj.wbs_adr_i == 32'h3000001c) begin //operand operation			
+							repeat(2)@(negedge uut.mprj.mprj.wb_clk_i);
+							if(uut.mprj.mprj.wbs_dat_i != {19'b0,uut.mprj.mprj.fpu.valid_in,uut.mprj.mprj.fpu.op_in})
+								$display("\noperation NOT CORRECT \ntime = %0d\tactual = 32'h%0h\ expected = 32'h%0h",$time,uut.mprj.mprj.wbs_dat_i,{19'b0,uut.mprj.mprj.fpu.valid_in, uut.mprj.mprj.fpu.op_in});
+							else
+								$display("\ntime = %0d \n operation is correct\n",$time	);
+						end
+					join
+						wait(checkbits == 16'h AB61) begin
+							$display("Monitor: Test %0d Passed\n",i);
+							i = i+1;
+						end
+				end
+			end
+		end
+		begin
+			wait(checkbits == 16'h AB62)
+			begin
+				$display("Monitor: ALL Test Finished");
+				$finish;
+				//disable fork;
+			end
+		end
+		join
+
 	end
 
 	initial begin
@@ -130,19 +164,14 @@ module la_test1_tb;
 	);
 
 	spiflash #(
-		.FILENAME("la_test1.hex")
+		.FILENAME("fpu_test_fclass.hex")
 	) spiflash (
 		.csb(flash_csb),
 		.clk(flash_clk),
 		.io0(flash_io0),
 		.io1(flash_io1),
-		.io2(),			// not used
-		.io3()			// not used
-	);
-
-	// Testbench UART
-	tbuart tbuart (
-		.ser_rx(uart_tx)
+		.io2(),
+		.io3()
 	);
 
 endmodule

@@ -19,7 +19,7 @@
 .SUFFIXES:
 .SILENT: clean all
 
-PATTERNS = io_ports la_test1 la_test2 wb_port mprj_stimulus
+PATTERNS = fpu_test_add_sub fpu_test_comp fpu_test_div fpu_test_f2i fpu_test_fclass fpu_test_fma fpu_test_i2f fpu_test_min_max fpu_test_multiply fpu_test_sign_inject fpu_test_sqrt io_ports_fpu_test la_test2_fpu
 
 all:  ${PATTERNS}
 	for i in ${PATTERNS}; do \
