@@ -1,4 +1,3 @@
-`default_nettype none
 /*
  *  SPDX-FileCopyrightText: 2015 Clifford Wolf
  *  PicoRV32 -- A Small RISC-V (RV32I) Processor Core
@@ -19,6 +18,7 @@
  *
  *  SPDX-License-Identifier: ISC
  */
+`default_nettype none
 
 /* verilator lint_off WIDTH */
 /* verilator lint_off PINMISSING */
