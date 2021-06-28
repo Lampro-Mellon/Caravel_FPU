@@ -3,9 +3,10 @@ name: UPRJ_CI
 
 on:
     # Runs on Every Push
-    # push:
+    push:
     # Runs on Pull Requests
-    # pull_request:
+    pull_request:
+    workflow_dispatch:
 
 jobs:
   precheck:
