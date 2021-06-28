@@ -15,7 +15,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 CARAVEL_ROOT?=$(PWD)/caravel
-PRECHECK_ROOT?=/home/baloch/Documents/pre_check
+PRECHECK_ROOT?=${HOME}/open_mpw_precheck
 SIM ?= RTL
 
 # Install lite version of caravel, (1): caravel-lite, (0): caravel
